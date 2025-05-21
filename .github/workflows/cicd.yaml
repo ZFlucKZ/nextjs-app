@@ -36,10 +36,6 @@ jobs:
     needs: [build-and-push-docker-image]
     name: GitOps Versioning
     steps:
-      - name: config git
-        run: |
-          git config user.name "robot"
-          git config user.email "robot@pajj.com"
       - name: Install yq
         run: |
           sudo apt-get update
@@ -52,6 +48,10 @@ jobs:
           git clone https://x-access-token:${GH_PAT}@github.com/ZFlucKZ/nonprod-k8s-manifest-2.git
 
           cd nonprod-k8s-manifest-2/dev/nextjs-app
+
+          git config user.name "robot"
+          git config user.email "robot@pajj.com"
+
           yq -i '.spec.template.spec.containers[0].image = "${{ secrets.DOCKER_USERNAME }}/${{ env.PROJECT_NAME }}:${{ env.GITHUB_SHA }}"' deployment.yaml
 
           git add deployment.yaml
