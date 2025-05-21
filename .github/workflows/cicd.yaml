@@ -36,7 +36,24 @@ jobs:
     needs: [build-and-push-docker-image]
     name: GitOps Versioning
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
+      - name: config git
+        run: |
+          git config user.name "robot"
+          git config user.email "robot@pajj.com"
+      - name: Install yq
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y yq
+      - name: change image tag to deploy dev
+        if: ${{ github.ref == 'refs/heads/develop' }}
+        env:
+          GH_PAT: ${{ secrets.GH_PAT }}
+        run: |
+          git clone https://x-access-token:${GH_PAT}@github.com/ZFlucKZ/nonprod-k8s-manifest-2.git
+
+          cd nonprod-k8s-manifest-2/dev/nextjs-app
+          yq -i '.spec.template.spec.containers[0].image = "${{ secrets.DOCKER_USERNAME }}/${{ env.PROJECT_NAME }}:${{ env.GITHUB_SHA }}"' deployment.yaml
+
+          git add deployment.yaml
+          git commit -m "[skip actions] 🤖 change develop docker image version"
+          git push origin develop
