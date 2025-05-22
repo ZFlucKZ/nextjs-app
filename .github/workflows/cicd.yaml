@@ -53,8 +53,10 @@ jobs:
           git config user.name "robot"
           git config user.email "robot@pajj.com"
 
-          yq -i '.spec.template.spec.containers[0].image = "${{ secrets.DOCKER_USERNAME }}/${{ env.PROJECT_NAME }}:${{ env.GITHUB_SHA }}"' deployment.yaml
+          yq -i '.spec.template.spec.containers[0].image = "${{ secrets.DOCKER_USERNAME }}/${{ env.PROJECT_NAME }}:${{ env.GITHUB_SHA }}"'deployment.yaml
 
           git add deployment.yaml
           git commit -m "[skip actions] 🤖 change develop docker image version"
           git push origin develop
+
+# 19fd1193e08d8bfc0f4e0e16e3b8833da3cae866
