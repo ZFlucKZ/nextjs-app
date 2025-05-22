@@ -7,6 +7,7 @@ on:
 
 env:
   PROJECT_NAME: nextjs-app
+  GITHUB_SHA: ${{ github.sha }}
 
 jobs:
   build-and-push-docker-image:
@@ -45,7 +46,6 @@ jobs:
         if: ${{ github.ref == 'refs/heads/develop' }}
         env:
           GH_PAT: ${{ secrets.GH_PAT }}
-          GITHUB_SHA: ${{ github.sha }}
         run: |
           git clone https://x-access-token:${GH_PAT}@github.com/ZFlucKZ/nonprod-k8s-manifest-2.git
 
@@ -55,7 +55,7 @@ jobs:
           git config user.email "robot@pajj.com"
 
           yq --version
-          yq e '.spec.template.spec.containers[0].image = "${{ secrets.DOCKER_USERNAME }}/${{ env.PROJECT_NAME }}:${GITHUB_SHA}"' -i deployment.yaml
+          yq e '.spec.template.spec.containers[0].image = "${{ secrets.DOCKER_USERNAME }}/${{ env.PROJECT_NAME }}:${{ env.GITHUB_SHA }}"' -i deployment.yaml
 
           git add deployment.yaml
           git commit -m "[skip actions] 🤖 change develop docker image version ${GITHUB_SHA}"
