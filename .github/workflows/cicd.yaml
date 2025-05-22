@@ -45,7 +45,7 @@ jobs:
         if: ${{ github.ref == 'refs/heads/develop' }}
         env:
           GH_PAT: ${{ secrets.GH_PAT }}
-          GITHUB_SHA: ${{ env.GITHUB_SHA }}
+          GITHUB_SHA: ${{ github.sha }}
         run: |
           git clone https://x-access-token:${GH_PAT}@github.com/ZFlucKZ/nonprod-k8s-manifest-2.git
 
